@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Καλοκαιρινές Άδειες 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #181c27;
+    --surface2: #1f2438;
+    --border: #2a2f45;
+    --text: #e8eaf0;
+    --text-muted: #6b7194;
+    --accent: #4f7cff;
+
+    --c0: #FF6B6B;
+    --c1: #FFB347;
+    --c2: #6BCB77;
+    --c3: #4D96FF;
+    --c4: #C77DFF;
+    --c5: #FF9EBB;
+    --c6: #00D4AA;
+    --c7: #FFE66D;
+    --c8: #FF8C42;
+    --c9: #64C8FF;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+
+  header p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 6px;
+  }
+
+  .doctor-badge {
+    display: inline-block;
+    margin-top: 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 18px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── LEGEND (overview mode) ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 28px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 5px 13px 5px 8px;
+    font-size: 0.78rem;
+    font-weight: 500;
+  }
+
+  .legend-dot {
+    width: 11px; height: 11px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── MONTHS ── */
+  .months-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  .month-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .month-header {
+    padding: 14px 20px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.15rem;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 0.01em;
+  }
+
+  .weekday-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    padding: 10px 14px 4px;
+    gap: 4px;
+  }
+
+  .weekday-label {
+    text-align: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 4px 0;
+  }
+
+  .days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    padding: 4px 14px 14px;
+    gap: 4px;
+  }
+
+  .day-cell {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all 0.12s ease;
+    position: relative;
+    user-select: none;
+    background: var(--surface2);
+    color: var(--text-muted);
+  }
+
+  .day-cell.empty {
+    background: transparent;
+    cursor: default;
+    border-color: transparent;
+  }
+
+  .day-cell.weekend {
+    color: #4a5070;
+  }
+
+  .day-cell:not(.empty):hover {
+    border-color: var(--accent);
+    color: var(--text);
+  }
+
+  .day-cell.selected {
+    color: #fff;
+    font-weight: 600;
+    border-color: transparent;
+  }
+
+  /* overview: multiple colors stacked */
+  .day-cell .color-stack {
+    position: absolute;
+    inset: 0;
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .color-stack-slice {
+    flex: 1;
+    opacity: 0.85;
+  }
+
+  .day-cell .day-num {
+    position: relative;
+    z-index: 2;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+  }
+
+  /* ── ACTIONS ── */
+  .actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 12px 28px;
+    border-radius: 10px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .btn-primary:hover { background: #3d6aed; transform: translateY(-1px); }
+
+  .btn-ghost {
+    background: var(--surface2);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+
+  .btn-ghost:hover { color: var(--text); border-color: var(--text-muted); }
+
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1a2540;
+    border: 1px solid #2a3a60;
+    color: var(--text);
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 100;
+  }
+
+  #toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ── STATUS ── */
+  .status-bar {
+    text-align: center;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-top: 14px;
+  }
+
+  .count-pill {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 3px 12px;
+    margin-left: 8px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .drag-hint {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    margin-top: -16px;
+    margin-bottom: 8px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Καλοκαιρινές Άδειες 2026</h1>
+  <p id="subtitle">Επιλέξτε τις ημέρες άδειας σας</p>
+  <div class="doctor-badge" id="doctorBadge">—</div>
+</header>
+
+<div id="legendWrap" style="display:none" class="legend"></div>
+
+<div class="drag-hint" id="dragHint">Κλικ ή σύρτε για επιλογή ημερών</div>
+
+<div class="months-wrap" id="monthsWrap"></div>
+
+<div class="status-bar" id="statusBar" style="display:none">
+  Επιλεγμένες ημέρες: <span class="count-pill" id="dayCount">0</span>
+</div>
+
+<div class="actions" id="actionsWrap">
+  <button class="btn btn-ghost" onclick="clearAll()">Καθαρισμός</button>
+  <button class="btn btn-primary" id="saveBtn" onclick="saveData()">💾 Αποθήκευση</button>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────────
+// REPLACE with your deployed Google Apps Script URL:
+const GAS_URL = "https://script.google.com/macros/s/AKfycbyHSLZ_2Dcij1vB6CbTEFn3LqVSPGaJT-CHFh2wg0rp44M62qArDITAn3hEk59VC0hk/exec";
+
+const DOCTORS = [
+  "ΤΣΟΥΤΣΟΥ","ΚΥΠΡΙΑΝΟΥ","ΚΑΡΙΤΤΕΒΛΗ","ΓΡΙΒΑ","ΒΕΛΛΙΟΣ",
+  "ΦΩΤΟΥ","ΑΜΟΙΡΑΔΑΚΗ","ΝΙΚΟΛΟΠΟΥΛΟΥ","ΚΟΝΤΟΓΕΩΡΓΟΥ","ΚΑΛΛΙΜΑΝΗ"
+];
+
+const COLORS = [
+  "var(--c0)","var(--c1)","var(--c2)","var(--c3)","var(--c4)",
+  "var(--c5)","var(--c6)","var(--c7)","var(--c8)","var(--c9)"
+];
+
+const MONTHS = [
+  { year: 2026, month: 5, name: "Ιούνιος 2026" },
+  { year: 2026, month: 6, name: "Ιούλιος 2026" },
+  { year: 2026, month: 7, name: "Αύγουστος 2026" }
+];
+
+const WEEKDAYS = ["Δε","Τρ","Τε","Πε","Πα","Σα","Κυ"];
+
+// ── STATE ────────────────────────────────────────────────────
+const params = new URLSearchParams(location.search);
+const isOverview = params.get("view") === "all";
+const doctorParam = params.get("doctor") || "";
+const doctorIndex = DOCTORS.indexOf(doctorParam);
+const myColor = doctorIndex >= 0 ? COLORS[doctorIndex] : null;
+
+let selectedDays = new Set(); // format: "YYYY-MM-DD"
+let allData = {}; // overview: { DOCTOR: "day1,day2,..." }
+let isDragging = false;
+let dragMode = null; // "add" or "remove"
+
+// ── INIT ─────────────────────────────────────────────────────
+async function init() {
+  if (isOverview) {
+    document.getElementById("subtitle").textContent = "Επισκόπηση όλων των αδειών";
+    document.getElementById("doctorBadge").textContent = "Επισκόπηση";
+    document.getElementById("actionsWrap").style.display = "none";
+    document.getElementById("dragHint").style.display = "none";
+    buildLegend();
+    await loadAllData();
+  } else {
+    if (!doctorParam || doctorIndex < 0) {
+      document.getElementById("subtitle").textContent = "Άγνωστος χρήστης";
+      document.getElementById("doctorBadge").textContent = "Χρήστης δεν βρέθηκε";
+      document.getElementById("actionsWrap").style.display = "none";
+      document.getElementById("dragHint").style.display = "none";
+      buildCalendar();
+      return;
+    }
+    document.getElementById("doctorBadge").textContent = "Dr. " + doctorParam;
+    document.getElementById("doctorBadge").style.color = myColor;
+    document.getElementById("doctorBadge").style.borderColor = myColor + "55";
+    document.getElementById("statusBar").style.display = "block";
+    await loadMyData();
+  }
+  buildCalendar();
+}
+
+// ── LEGEND ───────────────────────────────────────────────────
+function buildLegend() {
+  const wrap = document.getElementById("legendWrap");
+  wrap.style.display = "flex";
+  DOCTORS.forEach((d, i) => {
+    const item = document.createElement("div");
+    item.className = "legend-item";
+    item.innerHTML = `<span class="legend-dot" style="background:${COLORS[i]}"></span>${d}`;
+    wrap.appendChild(item);
+  });
+}
+
+// ── CALENDAR BUILD ────────────────────────────────────────────
+function buildCalendar() {
+  const wrap = document.getElementById("monthsWrap");
+  wrap.innerHTML = "";
+
+  MONTHS.forEach(({ year, month, name }) => {
+    const block = document.createElement("div");
+    block.className = "month-block";
+
+    // header
+    const hdr = document.createElement("div");
+    hdr.className = "month-header";
+    hdr.textContent = name;
+    block.appendChild(hdr);
+
+    // weekday labels
+    const wrow = document.createElement("div");
+    wrow.className = "weekday-row";
+    WEEKDAYS.forEach(d => {
+      const lbl = document.createElement("div");
+      lbl.className = "weekday-label";
+      lbl.textContent = d;
+      wrow.appendChild(lbl);
+    });
+    block.appendChild(wrow);
+
+    // days grid
+    const grid = document.createElement("div");
+    grid.className = "days-grid";
+
+    const firstDay = new Date(year, month, 1).getDay(); // 0=Sun
+    const offset = firstDay === 0 ? 6 : firstDay - 1;  // Mon=0
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    for (let i = 0; i < offset; i++) {
+      const empty = document.createElement("div");
+      empty.className = "day-cell empty";
+      grid.appendChild(empty);
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dateStr = `${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+      const cell = document.createElement("div");
+      cell.className = "day-cell";
+      cell.dataset.date = dateStr;
+
+      const dow = new Date(year, month, d).getDay();
+      if (dow === 0 || dow === 6) cell.classList.add("weekend");
+
+      const numSpan = document.createElement("span");
+      numSpan.className = "day-num";
+      numSpan.textContent = d;
+      cell.appendChild(numSpan);
+
+      if (!isOverview) {
+        cell.addEventListener("mousedown", e => { e.preventDefault(); startDrag(cell); });
+        cell.addEventListener("mouseenter", () => { if (isDragging) continueDrag(cell); });
+        cell.addEventListener("touchstart", e => { e.preventDefault(); startDrag(cell); }, { passive: false });
+        cell.addEventListener("touchmove", e => {
+          const touch = e.touches[0];
+          const el = document.elementFromPoint(touch.clientX, touch.clientY);
+          if (el && el.closest(".day-cell")) continueDrag(el.closest(".day-cell"));
+        }, { passive: false });
+      }
+
+      grid.appendChild(cell);
+    }
+
+    block.appendChild(grid);
+    wrap.appendChild(block);
+  });
+
+  document.addEventListener("mouseup", endDrag);
+  document.addEventListener("touchend", endDrag);
+
+  refreshCells();
+}
+
+// ── DRAG SELECT ───────────────────────────────────────────────
+function startDrag(cell) {
+  if (isOverview || cell.classList.contains("empty")) return;
+  isDragging = true;
+  const date = cell.dataset.date;
+  dragMode = selectedDays.has(date) ? "remove" : "add";
+  toggleDay(cell);
+}
+
+function continueDrag(cell) {
+  if (!isDragging || cell.classList.contains("empty")) return;
+  const date = cell.dataset.date;
+  if (dragMode === "add" && !selectedDays.has(date)) toggleDay(cell);
+  if (dragMode === "remove" && selectedDays.has(date)) toggleDay(cell);
+}
+
+function endDrag() {
+  isDragging = false;
+  dragMode = null;
+}
+
+function toggleDay(cell) {
+  const date = cell.dataset.date;
+  if (selectedDays.has(date)) {
+    selectedDays.delete(date);
+  } else {
+    selectedDays.add(date);
+  }
+  refreshCells();
+  updateCount();
+}
+
+// ── REFRESH CELLS ────────────────────────────────────────────
+function refreshCells() {
+  document.querySelectorAll(".day-cell:not(.empty)").forEach(cell => {
+    const date = cell.dataset.date;
+
+    // remove old color stack
+    const old = cell.querySelector(".color-stack");
+    if (old) old.remove();
+    cell.classList.remove("selected");
+    cell.style.background = "";
+
+    if (isOverview) {
+      // collect doctors on this day
+      const doctors = DOCTORS.filter((d, i) => {
+        const days = allData[d] ? allData[d].split(",") : [];
+        return days.includes(date);
+      });
+      if (doctors.length > 0) {
+        const stack = document.createElement("div");
+        stack.className = "color-stack";
+        doctors.forEach(d => {
+          const idx = DOCTORS.indexOf(d);
+          const slice = document.createElement("div");
+          slice.className = "color-stack-slice";
+          slice.style.background = COLORS[idx];
+          stack.appendChild(slice);
+        });
+        cell.appendChild(stack);
+        cell.querySelector(".day-num").style.color = "#fff";
+      } else {
+        cell.querySelector(".day-num").style.color = "";
+      }
+    } else {
+      if (selectedDays.has(date)) {
+        cell.classList.add("selected");
+        cell.style.background = myColor || "var(--accent)";
+        cell.querySelector(".day-num").style.color = "#fff";
+      } else {
+        cell.querySelector(".day-num").style.color = "";
+      }
+    }
+  });
+}
+
+// ── COUNT ────────────────────────────────────────────────────
+function updateCount() {
+  document.getElementById("dayCount").textContent = selectedDays.size;
+}
+
+// ── CLEAR ────────────────────────────────────────────────────
+function clearAll() {
+  selectedDays.clear();
+  refreshCells();
+  updateCount();
+}
+
+// ── LOAD / SAVE ───────────────────────────────────────────────
+async function loadMyData() {
+  try {
+    const res = await fetch(`${GAS_URL}?action=load&doctor=${encodeURIComponent(doctorParam)}`);
+    const json = await res.json();
+    if (json.days) {
+      json.days.split(",").forEach(d => { if (d) selectedDays.add(d); });
+    }
+  } catch (e) {
+    showToast("⚠️ Αποτυχία φόρτωσης δεδομένων");
+  }
+}
+
+async function loadAllData() {
+  try {
+    const res = await fetch(`${GAS_URL}?action=loadAll`);
+    allData = await res.json();
+  } catch (e) {
+    showToast("⚠️ Αποτυχία φόρτωσης δεδομένων");
+  }
+}
+
+async function saveData() {
+  const btn = document.getElementById("saveBtn");
+  btn.disabled = true;
+  btn.textContent = "Αποθήκευση...";
+  try {
+    const days = Array.from(selectedDays).sort().join(",");
+    const res = await fetch(`${GAS_URL}?action=save&doctor=${encodeURIComponent(doctorParam)}&days=${encodeURIComponent(days)}`);
+    const json = await res.json();
+    if (json.status === "ok") {
+      showToast("✅ Αποθηκεύτηκε!");
+    } else {
+      showToast("⚠️ Κάτι πήγε στραβά");
+    }
+  } catch (e) {
+    showToast("⚠️ Σφάλμα σύνδεσης");
+  }
+  btn.disabled = false;
+  btn.textContent = "💾 Αποθήκευση";
+}
+
+// ── TOAST ────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2800);
+}
+
+// ── GO ───────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
