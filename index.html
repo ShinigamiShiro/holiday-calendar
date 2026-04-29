@@ -67,7 +67,47 @@
     letter-spacing: 0.04em;
   }
 
-  /* ── LEGEND (overview mode) ── */
+  .day-cell.red-day {
+    border-color: #ff4444 !important;
+    color: #ff6666 !important;
+  }
+
+  .day-cell.red-day .day-num {
+    color: #ff6666;
+  }
+
+  .day-cell.red-day::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #ff4444;
+  }
+
+  .day-cell.selected.red-day {
+    border-color: #ff4444 !important;
+    box-shadow: 0 0 0 2px #ff444455;
+  }
+
+  .red-day-legend {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 20px;
+    font-size: 0.8rem;
+    color: #ff6666;
+    background: #ff22220d;
+    border: 1px solid #ff444433;
+    border-radius: 8px;
+    padding: 8px 16px;
+    max-width: 780px;
+    margin-left: auto;
+    margin-right: auto;
+  }
   .legend {
     display: flex;
     flex-wrap: wrap;
@@ -299,6 +339,10 @@
   <div class="doctor-badge" id="doctorBadge">—</div>
 </header>
 
+<div class="red-day-legend" id="redDayLegend">
+  🔴 Οι επισημασμένες ημέρες είναι ημέρες γενικής εφημερίας — αποφύγετε να επιλέξετε άδεια αυτές τις ημέρες
+</div>
+
 <div id="legendWrap" style="display:none" class="legend"></div>
 
 <div class="drag-hint" id="dragHint">Κλικ ή σύρτε για επιλογή ημερών</div>
@@ -340,6 +384,12 @@ const COLORS = [
   "var(--c0)","var(--c1)","var(--c2)","var(--c3)","var(--c4)",
   "var(--c5)","var(--c6)","var(--c7)","var(--c8)","var(--c9)"
 ];
+
+const RED_DAYS = new Set([
+  "2026-06-01","2026-06-09","2026-06-17","2026-06-25",
+  "2026-07-03","2026-07-11","2026-07-19","2026-07-27",
+  "2026-08-04","2026-08-12","2026-08-20","2026-08-28"
+]);
 
 const MONTHS = [
   { year: 2026, month: 5, name: "Ιούνιος 2026" },
@@ -449,6 +499,7 @@ function buildCalendar() {
 
       const dow = new Date(year, month, d).getDay();
       if (dow === 0 || dow === 6) cell.classList.add("weekend");
+      if (RED_DAYS.has(dateStr)) cell.classList.add("red-day");
 
       const numSpan = document.createElement("span");
       numSpan.className = "day-num";
