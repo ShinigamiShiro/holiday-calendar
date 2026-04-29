@@ -93,21 +93,13 @@
   }
 
   .red-day-legend {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    justify-content: center;
-    margin-bottom: 20px;
-    font-size: 0.8rem;
+    text-align: center;
+    font-size: 0.78rem;
     color: #ff6666;
-    background: #ff22220d;
-    border: 1px solid #ff444433;
-    border-radius: 8px;
-    padding: 8px 16px;
-    max-width: 780px;
-    margin-left: auto;
-    margin-right: auto;
+    margin-bottom: 20px;
   }
+
+
   .legend {
     display: flex;
     flex-wrap: wrap;
@@ -339,8 +331,9 @@
   <div class="doctor-badge" id="doctorBadge">—</div>
 </header>
 
-<div class="red-day-legend" id="redDayLegend">
-  🔴 Οι επισημασμένες ημέρες είναι ημέρες γενικής εφημερίας — αποφύγετε να επιλέξετε άδεια αυτές τις ημέρες
+<div class="red-day-legend">
+  <span style="display:inline-block;width:12px;height:12px;border-radius:3px;border:2px solid #ff4444;margin-right:6px;vertical-align:middle"></span>
+  Ημέρα Γενικής Εφημερίας
 </div>
 
 <div id="legendWrap" style="display:none" class="legend"></div>
