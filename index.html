@@ -326,6 +326,16 @@ const DOCTORS = [
   "ΦΩΤΟΥ","ΑΜΟΙΡΑΔΑΚΗ","ΝΙΚΟΛΟΠΟΥΛΟΥ","ΚΟΝΤΟΓΕΩΡΓΟΥ","ΚΑΛΛΙΜΑΝΗ"
 ];
 
+const SLUGS = [
+  "tsoutsou","kyprianov","karitevli","griva","vellios",
+  "fotou","amoiradaki","nikolopoulou","kontogeorgou","kallimani"
+];
+
+function slugToDoctor(slug) {
+  const i = SLUGS.indexOf(slug.toLowerCase());
+  return i >= 0 ? DOCTORS[i] : null;
+}
+
 const COLORS = [
   "var(--c0)","var(--c1)","var(--c2)","var(--c3)","var(--c4)",
   "var(--c5)","var(--c6)","var(--c7)","var(--c8)","var(--c9)"
@@ -342,7 +352,8 @@ const WEEKDAYS = ["Δε","Τρ","Τε","Πε","Πα","Σα","Κυ"];
 // ── STATE ────────────────────────────────────────────────────
 const params = new URLSearchParams(location.search);
 const isOverview = params.get("view") === "all";
-const doctorParam = params.get("doctor") || "";
+const rawParam = params.get("doctor") || "";
+const doctorParam = slugToDoctor(rawParam) || rawParam;
 const doctorIndex = DOCTORS.indexOf(doctorParam);
 const myColor = doctorIndex >= 0 ? COLORS[doctorIndex] : null;
 
